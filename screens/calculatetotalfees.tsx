@@ -1,6 +1,5 @@
-// CalculateTotalFees.tsx
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from './RootStackParams';
 
@@ -87,8 +86,11 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
             ))}
-            <Button title="Calculate Total Fees" onPress={calculateTotal} />
             
+            <TouchableOpacity style={styles.calculateButton} onPress={calculateTotal}>
+                <Text style={styles.calculateButtonText}>Calculate Total Fees</Text>
+            </TouchableOpacity>
+
             <Text style={styles.result}>
                 Selected Courses: {Object.values(selectedCourses).filter(Boolean).length}
             </Text>
@@ -98,6 +100,8 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.result}>
                 Total Cost (inc VAT): R{totalCost.toFixed(2)}
             </Text>
+
+            
         </ScrollView>
     );
 };
@@ -154,6 +158,20 @@ const styles = StyleSheet.create({
     result: {
         fontSize: 16,
         marginTop: 5,
+    },
+    calculateButton: {
+        backgroundColor: '#333333', // Updated button color
+        width: '100%',
+        height: 60,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    calculateButtonText: {
+        color: '#ffffff', // Updated text color
+        fontSize: 16,
+        textAlign: 'center',
     },
 });
 

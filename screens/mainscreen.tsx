@@ -1,4 +1,3 @@
-// mainscreen.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -22,9 +21,6 @@ const Homepage: React.FC<Props> = ({ navigation }) => {
 
             {/* Navigation Buttons at the bottom */}
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('mainscreen')}>
-                    <Text style={styles.buttonText}>Home</Text>
-                </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('summaryofsixmonthscourse')}>
                     <Text style={styles.buttonText}>Six-Month{'\n'}Course Overview</Text>
                 </TouchableOpacity>
@@ -33,6 +29,9 @@ const Homepage: React.FC<Props> = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('calculatetotalfees')}>
                     <Text style={styles.buttonText}>Fee{'\n'}Calculation</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('contactdetails')}>
+                    <Text style={styles.buttonText}>Contact{'\n'} Details</Text>
                 </TouchableOpacity>
             </View>
         </View>

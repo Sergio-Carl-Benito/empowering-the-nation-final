@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from './RootStackParams';
 import { Picker } from '@react-native-picker/picker';
@@ -74,7 +74,10 @@ const ContactDetails: React.FC<Props> = ({ navigation }) => {
                     <Picker.Item key={venue.id} label={venue.name} value={venue.id} />
                 ))}
             </Picker>
-            <Button title="Submit" onPress={handleSubmit} />
+            
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
 
             <View style={styles.contactInfo}>
                 <Text style={styles.infoTitle}>Contact Information</Text>
@@ -131,6 +134,20 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+    },
+    submitButton: {
+        backgroundColor: '#333333', // Button color
+        width: '100%',
+        height: 60,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    submitButtonText: {
+        color: '#ffffff', // Button text color
+        fontSize: 16,
+        textAlign: 'center',
     },
 });
 

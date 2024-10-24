@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from './RootStackParams';
 
 type Props = StackScreenProps<RootStackParamList, 'landscapingcourse'>;
 
-const LandscapingScreen: React.FC<Props> = () => {
+const LandscapingScreen: React.FC<Props> = ({ navigation }) => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Landscaping Course Overview</Text>
@@ -24,6 +24,23 @@ const LandscapingScreen: React.FC<Props> = () => {
                 • Aesthetics of plant shapes and colours{'\n'}
                 • Garden layout
             </Text>
+
+            {/* Button Container */}
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('mainscreen')}
+                >
+                    <Text style={styles.buttonText}>Home</Text>
+                </TouchableOpacity>
+            </View>
         </ScrollView>
     );
 };
@@ -53,7 +70,7 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 16,
         marginBottom: 20,
-        textAlign: 'left', // Align text to the left for better readability
+        textAlign: 'left',
     },
     contentTitle: {
         fontSize: 18,
@@ -64,6 +81,27 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 20,
         textAlign: 'left',
+    },
+    buttonContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        marginTop: 20,
+    },
+    button: {
+        backgroundColor: '#333333',
+        width: '45%', // Adjusted width for spacing
+        height: 60,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 14,
+        textAlign: 'center',
     },
 });
 

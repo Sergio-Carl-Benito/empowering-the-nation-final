@@ -9,7 +9,7 @@ import Homepage from './screens/mainscreen';
 import FirstAidCourse from './screens/firstaidcourse'; 
 import CalculateTotalFees from './screens/calculatetotalfees'; 
 import ChildMindingCourse from './screens/childmindingcourse';
-import ContactDetails from './screens/contactdetails'; // Import the new screen
+import ContactDetails from './screens/contactdetails'; 
 import GardenMaintenanceCourse from './screens/gardenmaintenancecourse'; 
 import LandscapingCourse from './screens/landscapingcourse'; 
 import CookingCourse from './screens/cookingcourse'; 
@@ -23,7 +23,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App() {
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator
+                screenOptions={{
+                    headerStyle: { backgroundColor: '#333333' },
+                    headerTintColor: '#ffffff', 
+                }}
+            >
                 <Stack.Screen name="mainscreen" component={Homepage} />
                 <Stack.Screen name="firstaidcourse" component={FirstAidCourse} />
                 <Stack.Screen name="calculatetotalfees" component={CalculateTotalFees} />
@@ -40,4 +45,3 @@ export default function App() {
         </NavigationContainer>
     );
 }
-
