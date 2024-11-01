@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
-import emailjs from 'emailjs-com';
 import { RootStackParamList } from './RootStackParams';
 
 const courses = [
@@ -24,13 +23,10 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
 
-    // Initialize EmailJS
-    emailjs.init("sU1KoUv-1xwxrdJTeY");
-
     const calculateTotal = () => {
         const selected = courses.filter(course => selectedCourses[course.id]);
         const total = selected.reduce((sum, course) => sum + course.price, 0);
-        
+
         let discount = 0;
         const numberOfCourses = selected.length;
         if (numberOfCourses === 2) discount = 0.05;
@@ -38,7 +34,7 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
         else if (numberOfCourses > 3) discount = 0.15;
 
         const discountAmount = total * discount;
-        const totalWithVAT = (total - discountAmount) * 1.15; 
+        const totalWithVAT = (total - discountAmount) * 1.15; // Add 15% VAT
         setTotalCost(totalWithVAT);
         setDiscountPercentage(discount * 100);
     };
@@ -48,34 +44,6 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
             ...prev,
             [id]: !prev[id],
         }));
-    };
-
-    const sendEmail = () => {
-        const templateParams = {
-            to_name: name,
-            email: email,
-            phone: phone,
-            total: totalCost.toFixed(2),
-            selectedCourses: courses
-                .filter(course => selectedCourses[course.id])
-                .map(course => course.name)
-                .join(', '),
-        };
-
-        emailjs.send('service_8nwdi2e', 'template_dm3a15h', templateParams)
-            .then((response) => {
-                console.log('Email sent successfully:', response.status, response.text);
-                Alert.alert('Success', 'Your email has been sent successfully!');
-            })
-            .catch((error) => {
-                console.error('Error sending email:', error);
-                Alert.alert('Error', 'There was an error sending your email. Please try again later.');
-            });
-    };
-
-    const handleSubmit = () => {
-        calculateTotal();
-        sendEmail();
     };
 
     return (
@@ -118,9 +86,9 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
             ))}
-            
-            <TouchableOpacity style={styles.calculateButton} onPress={handleSubmit}>
-                <Text style={styles.calculateButtonText}>Submit and Send Email</Text>
+
+            <TouchableOpacity style={styles.calculateButton} onPress={calculateTotal}>
+                <Text style={styles.calculateButtonText}>Calculate Total Fees</Text>
             </TouchableOpacity>
 
             <Text style={styles.result}>
@@ -132,6 +100,7 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.result}>
                 Total Cost (inc VAT): R{totalCost.toFixed(2)}
             </Text>
+            
         </ScrollView>
     );
 };
@@ -190,7 +159,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     calculateButton: {
-        backgroundColor: '#333333',
+        backgroundColor: '#333333', // Updated button color
         width: '100%',
         height: 60,
         borderRadius: 8,
@@ -199,7 +168,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     calculateButtonText: {
-        color: '#ffffff',
+        color: '#ffffff', // Updated text color
         fontSize: 16,
         textAlign: 'center',
     },
