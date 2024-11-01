@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Button, Alert } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from './RootStackParams';
 import { send, EmailJSResponseStatus } from '@emailjs/react-native';
@@ -24,7 +24,76 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
 
+    const validateEmail = (emailToCheck: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(emailToCheck);
+    };
+
+    const validatePhone = (phoneToCheck: string) => {
+        // Basic phone number validation (adjust regex as needed for your region)
+        const phoneRegex = /^[0-9]{10}$/;
+        return phoneRegex.test(phoneToCheck);
+    };
+
     const calculateTotal = () => {
+        // Check if at least one course is selected
+        const selectedCoursesCount = Object.values(selectedCourses).filter(Boolean).length;
+        if (selectedCoursesCount === 0) {
+            Alert.alert(
+                'Error', 
+                'Please select at least one course',
+                [{ text: 'OK' }]
+            );
+            return;
+        }
+
+        // Validate contact details
+        if (!name.trim()) {
+            Alert.alert(
+                'Error', 
+                'Please enter your name',
+                [{ text: 'OK' }]
+            );
+            return;
+        }
+
+        if (!phone.trim()) {
+            Alert.alert(
+                'Error', 
+                'Please enter your phone number',
+                [{ text: 'OK' }]
+            );
+            return;
+        }
+
+        if (!validatePhone(phone.trim())) {
+            Alert.alert(
+                'Error', 
+                'Please enter a valid 10-digit phone number',
+                [{ text: 'OK' }]
+            );
+            return;
+        }
+
+        if (!email.trim()) {
+            Alert.alert(
+                'Error', 
+                'Please enter your email',
+                [{ text: 'OK' }]
+            );
+            return;
+        }
+
+        if (!validateEmail(email.trim())) {
+            Alert.alert(
+                'Error', 
+                'Please enter a valid email address',
+                [{ text: 'OK' }]
+            );
+            return;
+        }
+
+        // Calculate total if all validations pass
         const selected = courses.filter(course => selectedCourses[course.id]);
         const total = selected.reduce((sum, course) => sum + course.price, 0);
 
@@ -40,35 +109,93 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
         setDiscountPercentage(discount * 100);
     };
 
-    const toggleCourse = (id: string) => {
-        setSelectedCourses(prev => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
-    };
-
     const onSubmit = async () => {
+        // Reuse the validation logic from calculateTotal
         try {
+            const selectedCoursesCount = Object.values(selectedCourses).filter(Boolean).length;
+            if (selectedCoursesCount === 0) {
+                Alert.alert(
+                    'Error', 
+                    'Please select at least one course',
+                    [{ text: 'OK' }]
+                );
+                return;
+            }
+
+            if (!name.trim()) {
+                Alert.alert(
+                    'Error', 
+                    'Please enter your name',
+                    [{ text: 'OK' }]
+                );
+                return;
+            }
+
+            if (!phone.trim() || !validatePhone(phone.trim())) {
+                Alert.alert(
+                    'Error', 
+                    'Please enter a valid 10-digit phone number',
+                    [{ text: 'OK' }]
+                );
+                return;
+            }
+
+            if (!email.trim() || !validateEmail(email.trim())) {
+                Alert.alert(
+                    'Error', 
+                    'Please enter a valid email address',
+                    [{ text: 'OK' }]
+                );
+                return;
+            }
+
+            // If all validations pass, send the email
             await send(
                 'service_mxen25r',
                 'template_m8hlxuu',
                 {
                     name,
                     email,
-                    message: 'This is a static message',
+                    phone,
+                    message: `Selected Courses: ${courses.filter(course => selectedCourses[course.id]).map(course => course.name).join(', ')}
+                    Total Cost (inc VAT): R${totalCost.toFixed(2)}
+                    Discount: ${discountPercentage}%`,
                 },
                 {
                     publicKey: 'vvS3ReToskikmVIKU',
                 },
             );
 
-            console.log('SUCCESS!');
+            // Show success alert
+            Alert.alert(
+                'Success', 
+                'Your form has been submitted successfully!',
+                [{ text: 'OK' }]
+            );
         } catch (err) {
+            // Handle email sending errors
             if (err instanceof EmailJSResponseStatus) {
-                console.log('EmailJS Request Failed...', err);
+                Alert.alert(
+                    'Error', 
+                    'Failed to send email. Please try again.',
+                    [{ text: 'OK' }]
+                );
+            } else {
+                Alert.alert(
+                    'Error', 
+                    'An unexpected error occurred.',
+                    [{ text: 'OK' }]
+                );
             }
             console.log('ERROR', err);
         }
+    };
+
+    const toggleCourse = (id: string) => {
+        setSelectedCourses(prev => ({
+            ...prev,
+            [id]: !prev[id],
+        }));
     };
 
     return (
@@ -85,10 +212,11 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
                 />
                 <TextInput
                     style={styles.input}
-                    placeholder="Phone"
+                    placeholder="Phone (10 digits)"
                     value={phone}
                     onChangeText={setPhone}
                     keyboardType="phone-pad"
+                    maxLength={10}
                 />
                 <TextInput
                     style={styles.input}
@@ -96,6 +224,7 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
+                    autoCapitalize="none"
                 />
             </View>
 
@@ -184,7 +313,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     calculateButton: {
-        backgroundColor: '#333333', // Updated button color
+        backgroundColor: '#333333',
         width: '100%',
         height: 60,
         borderRadius: 8,
@@ -193,7 +322,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     calculateButtonText: {
-        color: '#ffffff', // Updated text color
+        color: '#ffffff',
         fontSize: 16,
         textAlign: 'center',
     },
