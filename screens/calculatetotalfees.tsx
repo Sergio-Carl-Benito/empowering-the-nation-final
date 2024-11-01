@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Button } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from './RootStackParams';
+import { send, EmailJSResponseStatus } from '@emailjs/react-native';
 
 const courses = [
     { id: 'firstaid', name: 'First Aid', price: 1500 },
@@ -44,6 +45,30 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
             ...prev,
             [id]: !prev[id],
         }));
+    };
+
+    const onSubmit = async () => {
+        try {
+            await send(
+                'service_mxen25r',
+                'template_m8hlxuu',
+                {
+                    name,
+                    email,
+                    message: 'This is a static message',
+                },
+                {
+                    publicKey: 'vvS3ReToskikmVIKU',
+                },
+            );
+
+            console.log('SUCCESS!');
+        } catch (err) {
+            if (err instanceof EmailJSResponseStatus) {
+                console.log('EmailJS Request Failed...', err);
+            }
+            console.log('ERROR', err);
+        }
     };
 
     return (
@@ -100,7 +125,7 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.result}>
                 Total Cost (inc VAT): R{totalCost.toFixed(2)}
             </Text>
-            
+            <Button title="Submit" onPress={onSubmit} />
         </ScrollView>
     );
 };

@@ -1,44 +1,68 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from './RootStackParams';
 
 type Props = StackScreenProps<RootStackParamList, 'summaryofsixweekscourse'>;
 
 const SummaryOfSixWeeksCourse: React.FC<Props> = ({ navigation }) => {
+    const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+
+    const courseDetails = {
+        'Child Minding': {
+            description: 'Learn how to care for children, including basics of child development and safety.',
+            navigationRoute: 'childmindingcourse'
+        },
+        'Cooking': {
+            description: 'Master the art of cooking with hands-on training in various cuisines.',
+            navigationRoute: 'cookingcourse'
+        },
+        'Garden Maintenance': {
+            description: 'Acquire skills for maintaining gardens, including planting and landscaping techniques.',
+            navigationRoute: 'gardenmaintenancecourse'
+        }
+    };
+
+    const courseNames = Object.keys(courseDetails);
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Six-Week Courses</Text>
-
-            <View style={styles.course}>
-                <Text style={styles.courseTitle}>Child Minding</Text>
-                <Text style={styles.description}>
-                    Learn how to care for children, including basics of child development and safety.
-                </Text>
-                <TouchableOpacity style={styles.courseButton} onPress={() => navigation.navigate('childmindingcourse')}>
-                    <Text style={styles.courseButtonText}>View Details</Text>
-                </TouchableOpacity>
+            
+            {/* Course Picker */}
+            <View style={styles.pickerContainer}>
+                <Picker
+                    selectedValue={selectedCourse}
+                    onValueChange={(itemValue) => setSelectedCourse(itemValue)}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Select a Course" value={null} />
+                    {courseNames.map((courseName) => (
+                        <Picker.Item 
+                            key={courseName} 
+                            label={courseName} 
+                            value={courseName} 
+                        />
+                    ))}
+                </Picker>
             </View>
 
-            <View style={styles.course}>
-                <Text style={styles.courseTitle}>Cooking</Text>
-                <Text style={styles.description}>
-                    Master the art of cooking with hands-on training in various cuisines.
-                </Text>
-                <TouchableOpacity style={styles.courseButton} onPress={() => navigation.navigate('cookingcourse')}>
-                    <Text style={styles.courseButtonText}>View Details</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.course}>
-                <Text style={styles.courseTitle}>Garden Maintenance</Text>
-                <Text style={styles.description}>
-                    Acquire skills for maintaining gardens, including planting and landscaping techniques.
-                </Text>
-                <TouchableOpacity style={styles.courseButton} onPress={() => navigation.navigate('gardenmaintenancecourse')}>
-                    <Text style={styles.courseButtonText}>View Details</Text>
-                </TouchableOpacity>
-            </View>
+            {/* Course Details Section */}
+            {selectedCourse && (
+                <View style={styles.course}>
+                    <Text style={styles.courseTitle}>{selectedCourse}</Text>
+                    <Text style={styles.description}>
+                        {courseDetails[selectedCourse].description}
+                    </Text>
+                    <TouchableOpacity 
+                        style={styles.courseButton} 
+                        onPress={() => navigation.navigate(courseDetails[selectedCourse].navigationRoute)}
+                    >
+                        <Text style={styles.courseButtonText}>View Details</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
         </ScrollView>
     );
 };
@@ -56,6 +80,17 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         textAlign: 'center',
     },
+    pickerContainer: {
+        width: '100%',
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '#cccccc',
+        borderRadius: 8,
+    },
+    picker: {
+        height: 50,
+        width: '100%',
+    },
     course: {
         marginBottom: 20,
         alignItems: 'center',
@@ -72,7 +107,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     courseButton: {
-        backgroundColor: '#333333', // Button color
+        backgroundColor: '#333333',
         width: '100%',
         height: 60,
         borderRadius: 8,
@@ -80,7 +115,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     courseButtonText: {
-        color: '#ffffff', // Button text color
+        color: '#ffffff',
         fontSize: 16,
         textAlign: 'center',
     },
