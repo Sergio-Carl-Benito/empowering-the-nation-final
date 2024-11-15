@@ -204,6 +204,12 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.result}>Discount Percentage: {discountPercentage}%</Text>
             <Text style={styles.result}>Total Cost (inc VAT): R{totalCost.toFixed(2)}</Text>
             <Button title="Submit" onPress={onSubmit} />
+            <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
         </ScrollView>
     );
 };
@@ -273,6 +279,21 @@ const styles = StyleSheet.create({
     calculateButtonText: {
         color: '#ffffff',
         fontSize: 16,
+        textAlign: 'center',
+    },
+    button: {
+        backgroundColor: '#333333',
+        width: '45%', 
+        height: 60,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginTop: 10,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 14,
         textAlign: 'center',
     },
 });

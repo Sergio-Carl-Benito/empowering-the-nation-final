@@ -13,57 +13,21 @@ const venues = [
 ];
 
 const ContactDetails: React.FC<Props> = ({ navigation }) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
+  
     const [selectedVenue, setSelectedVenue] = useState(venues[0].id);
 
     const handleVenueChange = (itemValue: string) => {
         setSelectedVenue(itemValue);
     };
 
-    const handleSubmit = () => {
-        if (!name || !email || !message) {
-            Alert.alert('Error', 'Please fill in all fields.');
-            return;
-        }
-        if (!/\S+@\S+\.\S+/.test(email)) {
-            Alert.alert('Error', 'Please enter a valid email address.');
-            return;
-        }
-
-        console.log('Submitted:', { name, email, message, venue: selectedVenue });
-        setName('');
-        setEmail('');
-        setMessage('');
-    };
+    
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Contact Us</Text>
 
             <Text style={styles.subtitle}>Get in Touch</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Name"
-                value={name}
-                onChangeText={setName}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Message"
-                value={message}
-                onChangeText={setMessage}
-                multiline
-                numberOfLines={4}
-            />
+            
             <Text style={styles.label}>Select Venue:</Text>
             <Picker
                 selectedValue={selectedVenue}
@@ -75,16 +39,21 @@ const ContactDetails: React.FC<Props> = ({ navigation }) => {
                 ))}
             </Picker>
             
-            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                <Text style={styles.submitButtonText}>Submit</Text>
-            </TouchableOpacity>
+            
 
             <View style={styles.contactInfo}>
                 <Text style={styles.infoTitle}>Contact Information</Text>
                 <Text>Phones: (012) 345-6789</Text>
                 <Text>Email: contact@Empoweringnation.com</Text>
             </View>
+            <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
         </ScrollView>
+        
     );
 };
 
@@ -147,6 +116,20 @@ const styles = StyleSheet.create({
     submitButtonText: {
         color: '#ffffff', // Button text color
         fontSize: 16,
+        textAlign: 'center',
+    },
+    button: {
+        backgroundColor: '#333333',
+        width: '45%', 
+        height: 60,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginTop: 10,},
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 14,
         textAlign: 'center',
     },
 });

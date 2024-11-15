@@ -51,27 +51,36 @@ const SummaryOfSixMonthsCourse: React.FC<Props> = ({ navigation }) => {
                         />
                     ))}
                 </Picker>
+
+                
             </View>
+            <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
 
             {/* Course Details Section */}
             {selectedCourse && (
                 <View style={styles.course}>
                     <Text style={styles.subtitle}>{selectedCourse}</Text>
                     <Text style={styles.description}>
-                        {courseDetails[selectedCourse].description}
+                        {courseDetails[selectedCourse as keyof typeof courseDetails].description}
                     </Text>
                     <TouchableOpacity 
                         style={styles.courseButton} 
-                        onPress={() => navigation.navigate(courseDetails[selectedCourse].navigationRoute)}
-                    >
+
+                        onPress={() => navigation.navigate(courseDetails[selectedCourse as keyof typeof courseDetails].navigationRoute as keyof RootStackParamList)}                    >
                         <Text style={styles.courseButtonText}>View Details</Text>
                     </TouchableOpacity>
+                  
                 </View>
             )}
         </ScrollView>
     );
-};
 
+};
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
@@ -122,6 +131,21 @@ const styles = StyleSheet.create({
     courseButtonText: {
         color: '#ffffff',
         fontSize: 16,
+        textAlign: 'center',
+    },
+    button: {
+        backgroundColor: '#333333',
+        width: '45%', 
+        height: 60,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginTop: 10,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 14,
         textAlign: 'center',
     },
 });

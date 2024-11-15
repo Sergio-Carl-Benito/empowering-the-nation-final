@@ -9,7 +9,12 @@ type Props = StackScreenProps<RootStackParamList, 'summaryofsixweekscourse'>;
 const SummaryOfSixWeeksCourse: React.FC<Props> = ({ navigation }) => {
     const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
-    const courseDetails = {
+    const courseDetails: {
+        [key: string]: {
+            description: string;
+            navigationRoute: string;
+        }
+    } = {
         'Child Minding': {
             description: 'Learn how to care for children, including basics of child development and safety.',
             navigationRoute: 'childmindingcourse'
@@ -47,7 +52,12 @@ const SummaryOfSixWeeksCourse: React.FC<Props> = ({ navigation }) => {
                     ))}
                 </Picker>
             </View>
-
+            <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
             {/* Course Details Section */}
             {selectedCourse && (
                 <View style={styles.course}>
@@ -57,16 +67,20 @@ const SummaryOfSixWeeksCourse: React.FC<Props> = ({ navigation }) => {
                     </Text>
                     <TouchableOpacity 
                         style={styles.courseButton} 
-                        onPress={() => navigation.navigate(courseDetails[selectedCourse].navigationRoute)}
-                    >
+                        onPress={() => navigation.navigate(courseDetails[selectedCourse].navigationRoute as keyof RootStackParamList)}                    >
                         <Text style={styles.courseButtonText}>View Details</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
                 </View>
             )}
         </ScrollView>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
@@ -117,6 +131,21 @@ const styles = StyleSheet.create({
     courseButtonText: {
         color: '#ffffff',
         fontSize: 16,
+        textAlign: 'center',
+    },
+    button: {
+        backgroundColor: '#333333',
+        width: '45%', 
+        height: 60,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginTop: 10,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 14,
         textAlign: 'center',
     },
 });
