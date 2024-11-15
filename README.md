@@ -1,0 +1,1 @@
+The development environment for the mobile application was Visual Studio, where React Native was used to ensure compatibility across both Android and iPhone platforms. We utilized TypeScript, JavaScript, and React as the primary languages for the app's functionality.
