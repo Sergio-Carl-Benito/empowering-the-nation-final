@@ -1,9 +1,13 @@
+// Import necessary components from React and React Native
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Button, Alert } from 'react-native';
+// Import specific types for navigation
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from './RootStackParams';
+// Import functions from the email sending library
 import { send, EmailJSResponseStatus } from '@emailjs/react-native';
 
+// Define a list of courses with unique IDs, names, and prices
 const courses = [
     { id: 'firstaid', name: 'First Aid', price: 1500 },
     { id: 'sewing', name: 'Sewing', price: 1500 },
@@ -14,9 +18,12 @@ const courses = [
     { id: 'gardenmaintenance', name: 'Garden Maintenance', price: 750 },
 ];
 
+// Define a type for navigation properties specific to this screen
 type Props = StackScreenProps<RootStackParamList, 'calculatetotalfees'>;
 
+// Main functional component to calculate total fees for selected courses
 const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
+    // State to track selected courses, total cost, discount, and user contact info
     const [selectedCourses, setSelectedCourses] = useState<{ [key: string]: boolean }>({});
     const [totalCost, setTotalCost] = useState(0);
     const [discountPercentage, setDiscountPercentage] = useState(0);
@@ -24,135 +31,93 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
 
+    // Function to validate if an email is formatted correctly
     const validateEmail = (emailToCheck: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(emailToCheck);
     };
 
+    // Function to validate if the phone number contains exactly 10 digits
     const validatePhone = (phoneToCheck: string) => {
-        // Basic phone number validation (adjust regex as needed for your region)
         const phoneRegex = /^[0-9]{10}$/;
         return phoneRegex.test(phoneToCheck);
     };
 
+    // Function to calculate the total course fees with discount and VAT
     const calculateTotal = () => {
-        // Check if at least one course is selected
+        // Check if at least one course has been selected
         const selectedCoursesCount = Object.values(selectedCourses).filter(Boolean).length;
         if (selectedCoursesCount === 0) {
-            Alert.alert(
-                'Error', 
-                'Please select at least one course',
-                [{ text: 'OK' }]
-            );
+            Alert.alert('Error', 'Please select at least one course', [{ text: 'OK' }]);
             return;
         }
 
-        // Validate contact details
+        // Ensure user has entered all contact information
         if (!name.trim()) {
-            Alert.alert(
-                'Error', 
-                'Please enter your name',
-                [{ text: 'OK' }]
-            );
+            Alert.alert('Error', 'Please enter your name', [{ text: 'OK' }]);
             return;
         }
-
         if (!phone.trim()) {
-            Alert.alert(
-                'Error', 
-                'Please enter your phone number',
-                [{ text: 'OK' }]
-            );
+            Alert.alert('Error', 'Please enter your phone number', [{ text: 'OK' }]);
             return;
         }
-
         if (!validatePhone(phone.trim())) {
-            Alert.alert(
-                'Error', 
-                'Please enter a valid 10-digit phone number',
-                [{ text: 'OK' }]
-            );
+            Alert.alert('Error', 'Please enter a valid 10-digit phone number', [{ text: 'OK' }]);
             return;
         }
-
         if (!email.trim()) {
-            Alert.alert(
-                'Error', 
-                'Please enter your email',
-                [{ text: 'OK' }]
-            );
+            Alert.alert('Error', 'Please enter your email', [{ text: 'OK' }]);
             return;
         }
-
         if (!validateEmail(email.trim())) {
-            Alert.alert(
-                'Error', 
-                'Please enter a valid email address',
-                [{ text: 'OK' }]
-            );
+            Alert.alert('Error', 'Please enter a valid email address', [{ text: 'OK' }]);
             return;
         }
 
-        // Calculate total if all validations pass
+        // Calculate the total cost of selected courses
         const selected = courses.filter(course => selectedCourses[course.id]);
         const total = selected.reduce((sum, course) => sum + course.price, 0);
 
+        // Calculate discount based on the number of selected courses
         let discount = 0;
         const numberOfCourses = selected.length;
         if (numberOfCourses === 2) discount = 0.05;
         else if (numberOfCourses === 3) discount = 0.10;
         else if (numberOfCourses > 3) discount = 0.15;
 
+        // Apply discount and add VAT, then update the total and discount states
         const discountAmount = total * discount;
-        const totalWithVAT = (total - discountAmount) * 1.15; // Add 15% VAT
+        const totalWithVAT = (total - discountAmount) * 1.15; // 15% VAT
         setTotalCost(totalWithVAT);
         setDiscountPercentage(discount * 100);
     };
 
+    // Function to submit the form and send an email if all fields are validated
     const onSubmit = async () => {
-        // Reuse the validation logic from calculateTotal
         try {
+            // Re-run validation to confirm everything is correct
             const selectedCoursesCount = Object.values(selectedCourses).filter(Boolean).length;
             if (selectedCoursesCount === 0) {
-                Alert.alert(
-                    'Error', 
-                    'Please select at least one course',
-                    [{ text: 'OK' }]
-                );
+                Alert.alert('Error', 'Please select at least one course', [{ text: 'OK' }]);
                 return;
             }
-
             if (!name.trim()) {
-                Alert.alert(
-                    'Error', 
-                    'Please enter your name',
-                    [{ text: 'OK' }]
-                );
+                Alert.alert('Error', 'Please enter your name', [{ text: 'OK' }]);
                 return;
             }
-
             if (!phone.trim() || !validatePhone(phone.trim())) {
-                Alert.alert(
-                    'Error', 
-                    'Please enter a valid 10-digit phone number',
-                    [{ text: 'OK' }]
-                );
+                Alert.alert('Error', 'Please enter a valid 10-digit phone number', [{ text: 'OK' }]);
                 return;
             }
-
             if (!email.trim() || !validateEmail(email.trim())) {
-                Alert.alert(
-                    'Error', 
-                    'Please enter a valid email address',
-                    [{ text: 'OK' }]
-                );
+                Alert.alert('Error', 'Please enter a valid email address', [{ text: 'OK' }]);
                 return;
             }
 
-            // If all validations pass, send the email
+            // Send an email with user details and course selection
             await send(
-                'service_mxen25r',
-                'template_m8hlxuu',
+                'service_mxen25r', // Service ID from emailjs
+                'template_m8hlxuu', // Template ID from emailjs
                 {
                     name,
                     email,
@@ -162,42 +127,32 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
                     Discount: ${discountPercentage}%`,
                 },
                 {
-                    publicKey: 'vvS3ReToskikmVIKU',
+                    publicKey: 'vvS3ReToskikmVIKU', // Public key for emailjs
                 },
             );
 
-            // Show success alert
-            Alert.alert(
-                'Success', 
-                'Your form has been submitted successfully!',
-                [{ text: 'OK' }]
-            );
+            // Display a success message
+            Alert.alert('Success', 'Your form has been submitted successfully!', [{ text: 'OK' }]);
         } catch (err) {
-            // Handle email sending errors
+            // Error handling in case of email failure
             if (err instanceof EmailJSResponseStatus) {
-                Alert.alert(
-                    'Error', 
-                    'Failed to send email. Please try again.',
-                    [{ text: 'OK' }]
-                );
+                Alert.alert('Error', 'Failed to send email. Please try again.', [{ text: 'OK' }]);
             } else {
-                Alert.alert(
-                    'Error', 
-                    'An unexpected error occurred.',
-                    [{ text: 'OK' }]
-                );
+                Alert.alert('Error', 'An unexpected error occurred.', [{ text: 'OK' }]);
             }
-            console.log('ERROR', err);
+            console.log('ERROR', err); // Log error details to console for debugging
         }
     };
 
+    // Function to toggle selection of a course
     const toggleCourse = (id: string) => {
         setSelectedCourses(prev => ({
             ...prev,
-            [id]: !prev[id],
+            [id]: !prev[id], // Toggle course selection on or off
         }));
     };
 
+    // UI rendering of the screen with user input fields, course list, and buttons
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Calculate Total Fees</Text>
@@ -245,15 +200,9 @@ const CalculateTotalFees: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.calculateButtonText}>Calculate Total Fees</Text>
             </TouchableOpacity>
 
-            <Text style={styles.result}>
-                Selected Courses: {Object.values(selectedCourses).filter(Boolean).length}
-            </Text>
-            <Text style={styles.result}>
-                Discount Percentage: {discountPercentage}%
-            </Text>
-            <Text style={styles.result}>
-                Total Cost (inc VAT): R{totalCost.toFixed(2)}
-            </Text>
+            <Text style={styles.result}>Selected Courses: {Object.values(selectedCourses).filter(Boolean).length}</Text>
+            <Text style={styles.result}>Discount Percentage: {discountPercentage}%</Text>
+            <Text style={styles.result}>Total Cost (inc VAT): R{totalCost.toFixed(2)}</Text>
             <Button title="Submit" onPress={onSubmit} />
         </ScrollView>
     );
